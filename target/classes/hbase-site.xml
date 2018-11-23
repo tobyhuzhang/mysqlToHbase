@@ -25,45 +25,45 @@
                 <!--<value>/home/hadoop/zookeeper/zkdata</value>-->
         <!--</property>-->
 <!--</configuration>-->
-<!--<configuration>-->
-    <!--&lt;!&ndash; 指定 hbase 在 HDFS 上存储的路径 &ndash;&gt;-->
-    <!--<property>-->
-        <!--<name>hbase.rootdir</name>-->
-        <!--<value>hdfs://mycluster/hbase</value>-->
-    <!--</property>-->
-    <!--&lt;!&ndash; 指定 hbase 是分布式的 &ndash;&gt;-->
-    <!--<property>-->
-        <!--<name>hbase.cluster.distributed</name>-->
-        <!--<value>true</value>-->
-    <!--</property>-->
-    <!--<property>-->
-        <!--<name>hbase.zookeeper.property.clientPort</name>-->
-        <!--<value>2181</value>-->
-    <!--</property>-->
-    <!--&lt;!&ndash; 指定 zk 的地址，多个用“,”分割 &ndash;&gt;-->
-    <!--<property>-->
-        <!--<name>hbase.zookeeper.quorum</name>-->
-        <!--<value>master,slave231,slave238</value>-->
-    <!--</property>-->
-    <!--&lt;!&ndash; 指定 zk data临时存储目录&ndash;&gt;-->
-    <!--<property>-->
-        <!--<name>hbase.zookeeper.property.dataDir</name>-->
-        <!--<value>/home/zookeeper/zookeeper-3.4.13/dataDir</value>-->
-    <!--</property>-->
-    <!--&lt;!&ndash;Zookeeper连接超时时间&ndash;&gt;-->
-    <!--<property>-->
-        <!--<name>zookeeper.session.timeout</name>-->
-        <!--<value>60000</value>-->
-    <!--</property>-->
-<!--</configuration>-->
-
 <configuration>
+    <!-- 指定 hbase 在 HDFS 上存储的路径 -->
     <property>
-        <name>hbase.rootdir</name> <!-- hbase存放数据目录 -->
-        <value>hdfs://192.168.11.232:9000/hbase</value>
+        <name>hbase.rootdir</name>
+        <value>hdfs://mycluster/hbase</value>
     </property>
+    <!-- 指定 hbase 是分布式的 -->
     <property>
-        <name>hbase.cluster.distributed</name> <!-- 是否分布式部署 -->
+        <name>hbase.cluster.distributed</name>
         <value>true</value>
     </property>
+    <property>
+        <name>hbase.zookeeper.property.clientPort</name>
+        <value>2181</value>
+    </property>
+    <!-- 指定 zk 的地址，多个用“,”分割 -->
+    <property>
+        <name>hbase.zookeeper.quorum</name>
+        <value>master,slave231,slave238</value>
+    </property>
+    <!-- 指定 zk data临时存储目录-->
+    <property>
+        <name>hbase.zookeeper.property.dataDir</name>
+        <value>/home/zookeeper/zookeeper-3.4.13/dataDir</value>
+    </property>
+    <!--Zookeeper连接超时时间-->
+    <property>
+        <name>zookeeper.session.timeout</name>
+        <value>60000</value>
+    </property>
 </configuration>
+
+<!--<configuration>-->
+    <!--<property>-->
+        <!--<name>hbase.rootdir</name> &lt;!&ndash; hbase存放数据目录 &ndash;&gt;-->
+        <!--<value>hdfs://192.168.11.232:9000/hbase</value>-->
+    <!--</property>-->
+    <!--<property>-->
+        <!--<name>hbase.cluster.distributed</name> &lt;!&ndash; 是否分布式部署 &ndash;&gt;-->
+        <!--<value>true</value>-->
+    <!--</property>-->
+<!--</configuration>-->

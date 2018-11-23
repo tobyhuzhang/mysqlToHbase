@@ -1,10 +1,10 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : mini132
+Source Server         : 192.168.11.234
 Source Server Version : 50717
 Source Host           : 192.168.135.132:3306
-Source Database       : grg_hr
+Source Database       : toby
 
 Target Server Type    : MYSQL
 Target Server Version : 50717

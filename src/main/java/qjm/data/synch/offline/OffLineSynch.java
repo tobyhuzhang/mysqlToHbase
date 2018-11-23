@@ -1,9 +1,12 @@
 package qjm.data.synch.offline;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hbase.client.Scan;
 import qjm.data.synch.hbase.HbaseUtils;
 import qjm.data.synch.modle.EducationExperience;
 import qjm.data.synch.modle.Employee;
+import qjm.data.synch.online.OnlineSynch;
 import qjm.data.synch.service.SqlDataService;
 
 import java.util.List;
@@ -12,7 +15,7 @@ import java.util.List;
  * 离线同步数据
  */
 public class OffLineSynch {
-
+    static final Log LOG = LogFactory.getLog(OffLineSynch.class);
     /**
      * 从关系型数据库同步数据到hbase
      */
@@ -37,6 +40,7 @@ public class OffLineSynch {
             List<Employee> list = hbaseUtils.scanData(scan, Employee.class);
             for (Employee employee:list){
                 System.out.println(employee);
+                LOG.info(employee);
             }
 
         } catch (Exception e) {

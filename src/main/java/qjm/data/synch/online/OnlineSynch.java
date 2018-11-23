@@ -35,7 +35,7 @@ public class OnlineSynch {
         // 创建链接
         CanalConnector connector = CanalConnectors.newSingleConnector(
                 new InetSocketAddress("192.168.11.234",
-                        3306),
+                        11111),
                 "example",
                 "",
                 ""
@@ -45,7 +45,7 @@ public class OnlineSynch {
         try {
             connector.connect();
             //指定监听数据库
-            connector.subscribe(".*\\\\..*");
+            connector.subscribe("toby\\..*");
             connector.rollback();
             while (true) {
                 // 获取指定数量的数据
@@ -55,7 +55,7 @@ public class OnlineSynch {
                 if (batchId == -1 || size == 0) {
                     LOG.info("waitting...");
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(3000);
                     } catch (InterruptedException e) {
                     }
                 } else {
@@ -64,6 +64,7 @@ public class OnlineSynch {
                 }
 
                 connector.ack(batchId); // 提交确认
+                LOG.info("提交确认...");
             }
         } catch (Exception e) {
             // 处理失败, 回滚数据
@@ -145,6 +146,7 @@ public class OnlineSynch {
                 LOG.info("before : \n"+employee);
 
                 hbaseUtils.putData(serialization);
+                LOG.info("putData : \n"+employee);
 
                 employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
                 LOG.info("before : \n"+employee);
