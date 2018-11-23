@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matrix.cloud.dao.SendInterfaceDao">	
+
+    <select id="getDataByVin" parameterType="java.lang.String" resultType="com.matrix.cloud.model.TspVehicleConditionDO">  
+		SELECT
+			t1.*
+		FROM
+			ims_tspvehiclecondition t1
+		WHERE
+			t1.vin = #{vin} 
+			AND t1.TotalDistance &gt;0 
+			AND t1.Latitude &gt;0 
+			AND t1.Longitude &gt;0 
+		ORDER BY
+			t1.Id DESC
+		LIMIT 1
+    </select>
+    
+    <select id="getTemp" parameterType="java.lang.String" resultType="com.matrix.cloud.model.TemperatureRecordDO">
+	    SELECT
+			*  
+		FROM
+			ims_temp_record t1
+		WHERE
+			t1.deviceNumber = #{deviceNumber}
+		order by t1.`timestamp` DESC
+		LIMIT 1
+    </select>
+	
+    <select id="getHisBeforeToday" parameterType="java.util.HashMap" resultType="com.matrix.cloud.model.TspVehicleConditionDO">
+	    SELECT
+			*
+		FROM
+			ims_tspvehiclecondition t1
+		WHERE
+			t1.VIN = #{vin}
+			AND t1.TotalDistance &gt;0 
+			AND t1.Latitude &gt;0 
+			AND t1.Longitude &gt;0 
+			AND t1.AcquisitionTime &lt;#{curTime}
+		ORDER BY
+			t1.AcquisitionTime DESC
+		LIMIT 1
+	</select>
+	
+    <select id="calPath" parameterType="java.util.HashMap" resultType="java.lang.Float">
+	    select convert(v1-v2,decimal(10,2)) as run from 
+		(SELECT
+			t1.TotalDistance as v1
+		FROM
+			ims_tspvehiclecondition t1
+		WHERE
+			t1.VIN = #{vin}
+			AND t1.TotalDistance &gt;0 
+					AND t1.Latitude &gt;0 
+		AND t1.Longitude &gt;0 
+		ORDER BY
+			t1.AcquisitionTime DESC
+		LIMIT 1)a,
+		(SELECT
+			t2.TotalDistance as v2
+		FROM
+			ims_tspvehiclecondition t2
+		WHERE
+			t2.VIN = #{vin}
+			AND t2.TotalDistance &gt;0 
+			AND t1.Latitude &gt;0 
+			AND t1.Longitude &gt;0 
+			AND t2.AcquisitionTime &lt;#{curTime}
+		ORDER BY
+			t2.AcquisitionTime DESC
+		LIMIT 1) b
+	</select>
+	
+	<select id="getTotalDistanceByVin" parameterType="java.lang.String" resultType="java.lang.Float">
+		SELECT
+			convert(t.TotalDistance,decimal(10,2)) 
+		FROM
+			ims_tspvehiclecondition t
+		WHERE
+			t.VIN = #{vin}
+			AND t.TotalDistance &gt;0 
+			AND t1.Latitude &gt;0 
+			AND t1.Longitude &gt;0 
+		ORDER BY
+			t.AcquisitionTime DESC
+		LIMIT 1
+	</select>
+    
+    <!-- 根据机动车vin查询车联网数据集合  -->
+    <select id="getTSPDataByVin" parameterType="java.util.HashMap" resultType="com.matrix.cloud.model.TspVehicleConditionDO">  
+       SELECT
+			t1.*
+		FROM
+			ims_tspvehiclecondition t1
+		WHERE
+			t1.VIN = #{vin} 
+		AND t1.Latitude &gt;0 
+		AND t1.Longitude &gt;0 
+		<if test="fromTime != null and fromTime != ''">
+    		AND t1.AcquisitionTime &gt; #{fromTime,jdbcType=VARCHAR}
+	    </if> 
+	    <if test="toTime != null and toTime != ''">
+	    	AND t1.AcquisitionTime &lt; #{toTime,jdbcType=VARCHAR}
+	    </if>
+    </select>
+    
+    <select id="getVehicleByVin" resultType="com.matrix.cloud.model.VehicleDO">
+		select `Id`,`CreateTime`,`CreateUserId`,`UpdateTime`,`UpdateUserId`,`IsDeleted`,`plateLicenseNo`,`engineNo`,`brandName`,`brandNo`,`color`,`description`,`drivingLicenseExpiredDate`,`drivingLicenseNo`,`gateWayName`,`gateWayNo`,`makerName`,`makerNo`,`modelName`,`modelNo`,`no`,`seriesName`,`seriesNo`,`serviceName`,`serviceNo`,`sim`,`tboxModelName`,`tboxModelNo`,`tboxNo`,`Vin`,`serviceLife`,`registerDate`,`powerType`,`year`,`insuranceNo`,`CLengthNo`,`CLength`,`CWidth`,`CHeight`,`oilType`,`vehicleOwner`,`purchaseDate`,`tempDeviceNo`,`showModelsId`,`useType`,`companyOwner` from ims_vehicle where vin = #{value}
+	</select>
+	
+	<select id="getDataBeforeTimeLast" parameterType="java.util.HashMap" resultType="com.matrix.cloud.model.TspVehicleConditionDO">
+	    SELECT
+			*
+		FROM
+			ims_tspvehiclecondition t1
+		WHERE
+			t1.VIN = #{vin}
+			AND t1.TotalDistance &gt;0 
+			AND t1.Latitude &gt;0 
+			AND t1.Longitude &gt;0 
+			AND t1.EngineSpeed &gt;0
+			AND t1.AcquisitionTime &lt;#{time}
+		ORDER BY
+			t1.AcquisitionTime DESC
+		LIMIT 1
+	</select>
+	
+	<select id="getDataAfterTimeFirst" parameterType="java.util.HashMap" resultType="com.matrix.cloud.model.TspVehicleConditionDO">
+	    SELECT
+			*
+		FROM
+			ims_tspvehiclecondition t1
+		WHERE
+			t1.VIN = #{vin}
+			AND t1.TotalDistance &gt;0 
+			AND t1.Latitude &gt;0 
+			AND t1.Longitude &gt;0 
+			AND t1.EngineSpeed &gt;0
+			AND t1.AcquisitionTime &gt;#{time}
+		ORDER BY
+			t1.AcquisitionTime ASC
+		LIMIT 1
+	</select>
+	
+	<select id="getDeviceVinByVin" resultType="com.matrix.cloud.model.DeviceVinDO">
+		select `id`,`deviceNumber`,`vin`,`deviceType`,`isDeleted` from ims_device_vin where vin = #{value} and isDeleted = 0
+	</select>
+
+	<select id="getDeviceVinList" resultType="com.matrix.cloud.model.DeviceVinDO">
+		select `id`,`deviceNumber`,`vin`,`deviceType` from ims_device_vin
+		<where>
+			<if test="devicenumber != null and devicenumber != ''"> and deviceNumber = #{devicenumber} </if>
+			<if test="vin != null and vin != ''"> and vin = #{vin} </if>
+			<if test="devicetype != null and devicetype != ''"> and deviceType = #{devicetype} </if>
+			isDeleted = 0
+		</where>
+	</select>
+	
+	<insert id="saveDeviceVin" parameterType="com.matrix.cloud.model.DeviceVinDO" useGeneratedKeys="true" keyProperty="id">
+		insert into ims_device_vin
+		(
+			`deviceNumber`, 
+			`vin`, 
+			`deviceType`, 
+			`isDeleted`
+		)
+		values
+		(
+			#{devicenumber}, 
+			#{vin}, 
+			#{devicetype}, 
+			#{isdeleted}
+		)
+	</insert>
+	
+	<update id="deleteDeviceVin" parameterType="com.matrix.cloud.model.DeviceVinDO">
+		update ims_device_vin 
+			set isDeleted =1 
+		<where>
+			<if test="devicenumber != null and devicenumber != ''"> and deviceNumber = #{devicenumber} </if>
+			<if test="vin != null and vin != ''"> and vin = #{vin} </if>
+			<if test="devicetype != null and devicetype != ''"> and deviceType = #{devicetype} </if>
+			<if test="id != null and id != ''"> and id = #{id} </if>
+			isDeleted = 0
+		</where>
+	</update>
+	
+	<select id="getCompleteDataByVin" parameterType="java.lang.String" resultType="com.matrix.cloud.model.TspCompleteConditionDO">  
+		SELECT
+			t1.*
+		FROM
+			ims_tsp_completecondition t1
+		WHERE
+			t1.vin = #{vin} 
+		ORDER BY
+			t1.Id DESC
+		LIMIT 1
+    </select>
+	<select id="searchCompleteConByTime" parameterType="java.util.HashMap" resultType="com.matrix.cloud.model.TspCompleteConditionDO">  
+       SELECT
+			t1.*
+		FROM
+			ims_tsp_completecondition t1
+		WHERE
+			t1.VIN = #{vin} 
+		<if test="fromTime != null and fromTime != ''">
+    		AND t1.AcquisitionTime &gt; #{fromTime,jdbcType=VARCHAR}
+	    </if> 
+	    <if test="toTime != null and toTime != ''">
+	    	AND t1.AcquisitionTime &lt; #{toTime,jdbcType=VARCHAR}
+	    </if>
+    </select>
+</mapper>
