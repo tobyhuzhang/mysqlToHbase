@@ -18,7 +18,7 @@ public class SimpleCanalClient {
     public static void main(String args[]) {
         // 创建链接
         CanalConnector connector = CanalConnectors.newSingleConnector(
-                new InetSocketAddress("192.168.11.234",
+                new InetSocketAddress("192.168.11.40",
                         11111),
                 "example",
                 "",
@@ -28,7 +28,7 @@ public class SimpleCanalClient {
         Long batchId  = null;
         try {
             connector.connect();
-            connector.subscribe(".*\\\\..*");
+            connector.subscribe(".*\\..*");
             connector.rollback();
             while (true) {
                 // 获取指定数量的数据

@@ -34,7 +34,7 @@ public class OnlineSynch {
     public void synchToHbase(){
         // 创建链接
         CanalConnector connector = CanalConnectors.newSingleConnector(
-                new InetSocketAddress("192.168.11.40",
+                new InetSocketAddress("192.168.11.234",
                         11111),
                 "example",
                 "",
@@ -45,11 +45,12 @@ public class OnlineSynch {
         try {
             connector.connect();
             //指定监听数据库
-            connector.subscribe("tspdata\\..*");
+            connector.subscribe("grg_hr\\..*");
             connector.rollback();
             while (true) {
                 // 获取指定数量的数据
                 Message message = connector.getWithoutAck(batchSize);
+                LOG.info(message.toString());
                 batchId = message.getId();
                 int size = message.getEntries().size();
                 if (batchId == -1 || size == 0) {
