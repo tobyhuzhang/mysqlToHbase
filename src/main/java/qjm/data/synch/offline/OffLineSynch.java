@@ -33,14 +33,15 @@ public class OffLineSynch {
         try {
             //将数据添加到hbase
             hbaseUtils.putData(employees);
+            LOG.info("插入HBase职工数据"+employees);
             hbaseUtils.putData(educations);
+            LOG.info("插入HBase教育经历数据"+educations);
 
             //查询hbase中的数据
             Scan scan = new Scan();
             List<Employee> list = hbaseUtils.scanData(scan, Employee.class);
             for (Employee employee:list){
                 System.out.println(employee);
-                LOG.info(employee);
             }
 
         } catch (Exception e) {

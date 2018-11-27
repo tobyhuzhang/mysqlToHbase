@@ -42,12 +42,12 @@
     <result column="table_date" property="tableDate" jdbcType="TIMESTAMP" />
     <result column="table_status" property="tableStatus" jdbcType="INTEGER" />
   </resultMap>
-  <sql id="Base_Column_List" >
-    id, employee_id, identity_type, identity_id, name, gender, birth, birth_year, birth_month, 
-    birth_day, image_path, age, tall, blood_type, nation, jiguan, birth_place, ethic, 
-    marital_status, have_child, politic_face, join_party_date, full_party_date, local_party_branch, 
-    party_job, work_date, join_date, employment_category, job_status, phone, office_telephone, 
-    email, address, emerg_cont_person, emerg_cont_methon, emerg_cont_addr, emp_code, 
+  <sql id="Base_Column_List">
+    id, employee_id, identity_type, identity_id, name, gender, birth, birth_year, birth_month,
+    birth_day, image_path, age, tall, blood_type, nation, jiguan, birth_place, ethic,
+    marital_status, have_child, politic_face, join_party_date, full_party_date, local_party_branch,
+    party_job, work_date, join_date, employment_category, job_status, phone, office_telephone,
+    email, address, emerg_cont_person, emerg_cont_methon, emerg_cont_addr, emp_code,
     table_date, table_status
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >

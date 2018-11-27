@@ -2,3 +2,7 @@
 /data-synch.iml
 /target/
 /dependency-reduced-pom.xml
+/src/main/java/META-INF/
+/pom.xml
+/README.md
+/mysqlToHbase.iml

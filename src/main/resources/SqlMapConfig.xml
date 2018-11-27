@@ -11,17 +11,17 @@
             <!-- 数据库连接池，由mybatis -->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://192.168.11.234:3306/toby"/>
-                <property name="username" value="ytsk"/>
-                <property name="password" value="!QAZ2wsx"/>
+                <property name="url" value="jdbc:mysql://192.168.11.40:3306/tspdata"/>
+                <property name="username" value="canal"/>
+                <property name="password" value="canal"/>
             </dataSource>
         </environment>
     </environments>
 
     <!--加载映射-->
     <mappers>
-        <mapper resource="mapping/EmployeeMapper.xml"></mapper>
-        <mapper resource="mapping/EducationExperienceMapper.xml"></mapper>
-        <!--<mapper resource="mapping/SendInterfaceMapper.xml"></mapper>-->
+        <!--<mapper resource="mapping/EmployeeMapper.xml"></mapper>-->
+        <!--<mapper resource="mapping/EducationExperienceMapper.xml"></mapper>-->
+        <mapper resource="mapping/SendInterfaceMapper.xml"></mapper>
     </mappers>
 </configuration>

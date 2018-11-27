@@ -1,6 +1,7 @@
 qjm\data\synch\hbase\HbaseSerializationReflect.class
 qjm\data\synch\annotation\Column.class
 qjm\data\synch\mapper\EmployeeMapper.class
+qjm\data\synch\mapper\SendInterfaceMapper.class
 qjm\data\synch\modle\TspVehicleConditionDO.class
 qjm\data\synch\offline\OffLineSynch.class
 qjm\data\synch\modle\Employee.class
