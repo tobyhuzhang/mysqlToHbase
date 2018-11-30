@@ -47,6 +47,25 @@
       #{extendField2,jdbcType=VARCHAR}, #{extendField3,jdbcType=INTEGER}, #{extendField4,jdbcType=INTEGER}
       )
   </insert>
+
+  <insert id="insertByBatch" parameterType="java.util.List" >
+    insert into hr_education_experience (employee_id, graduate_from,
+                                         graduate_from_other, education, degree,
+                                         edu_major, startdt, enddt,
+                                         table_date, table_status, extend_field_1,
+                                         extend_field_2, extend_field_3, extend_field_4
+    )
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+    (#{employeeId,jdbcType=VARCHAR}, #{graduateFrom,jdbcType=VARCHAR},
+                                   #{graduateFromOther,jdbcType=VARCHAR}, #{education,jdbcType=INTEGER}, #{degree,jdbcType=INTEGER},
+                                   #{eduMajor,jdbcType=VARCHAR}, #{startdt,jdbcType=DATE}, #{enddt,jdbcType=DATE},
+                                   #{tableDate,jdbcType=TIMESTAMP}, #{tableStatus,jdbcType=INTEGER}, #{extendField1,jdbcType=VARCHAR},
+            #{extendField2,jdbcType=VARCHAR}, #{extendField3,jdbcType=INTEGER}, #{extendField4,jdbcType=INTEGER}
+    )
+    </foreach>
+  </insert>
+
   <insert id="insertSelective" parameterType="qjm.data.synch.modle.EducationExperience" >
     insert into hr_education_experience
     <trim prefix="(" suffix=")" suffixOverrides="," >

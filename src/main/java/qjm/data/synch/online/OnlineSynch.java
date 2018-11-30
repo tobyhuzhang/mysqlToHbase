@@ -15,7 +15,6 @@ import qjm.data.synch.hbase.HbaseUtils;
 import qjm.data.synch.modle.Employee;
 import qjm.data.synch.service.SqlDataService;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class OnlineSynch {
     /**
      * 从关系型数据库同步数据到hbase
      */
-    public void synchToHbase(){
+    public void synchToHbase() {
         // 创建链接
         CanalConnector connector = CanalConnectors.newSingleConnector(
                 new InetSocketAddress("192.168.11.234",
@@ -41,7 +40,7 @@ public class OnlineSynch {
                 ""
         );
         int batchSize = 1000;
-        Long batchId  = null;
+        Long batchId = null;
         try {
             connector.connect();
             //指定监听数据库
@@ -80,6 +79,7 @@ public class OnlineSynch {
 
     /**
      * 处理
+     *
      * @param entries
      */
     private void handleEntry(List<Entry> entries) {
@@ -116,7 +116,7 @@ public class OnlineSynch {
                     //LOG.info("\n-------&gt; before");
                     //printColumn(rowData.getBeforeColumnsList());
                     LOG.info("\n-------&gt; after");
-                    updateData(header.getTableName(),rowData.getAfterColumnsList());
+                    updateData(header.getTableName(), rowData.getAfterColumnsList());
                 }
             }
         }
@@ -125,7 +125,7 @@ public class OnlineSynch {
     /**
      * 更新数据
      */
-    private void updateData(String tableName, List<Column> columns){
+    private void updateData(String tableName, List<Column> columns) {
         /**
          * 1. 获取主键
          * 2. 根据主键查询
@@ -136,21 +136,21 @@ public class OnlineSynch {
 
         HbaseSerialization serialization = null;
         //根据不同表做处理
-        if(tableName.equals("hr_employee")){
+        if (tableName.equals("hr_employee")) {
             //serialization = sqlDataService.getEmployeeById(key);
             serialization = sqlDataService.getById(key, Employee.class);
         }
 
-        if (serialization != null){
+        if (serialization != null) {
             try {
                 Employee employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
-                LOG.info("before : \n"+employee);
+                LOG.info("before : \n" + employee);
 
                 hbaseUtils.putData(serialization);
-                LOG.info("putData : \n"+employee);
+                LOG.info("putData : \n" + employee);
 
                 employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
-                LOG.info("before : \n"+employee);
+                LOG.info("before : \n" + employee);
             } catch (Exception e) {
                 LOG.error(e.getMessage());
             }
@@ -160,7 +160,7 @@ public class OnlineSynch {
     /**
      * 删除数据
      */
-    private void deleteData(String tableName, List<Column> columns){
+    private void deleteData(String tableName, List<Column> columns) {
         /**
          * 1. 获取主键
          * 2. 根据主键删除hbase数据
@@ -170,18 +170,18 @@ public class OnlineSynch {
 
         Class clazz = null;
         //根据不同表做处理
-        if(tableName.equals("hr_employee")){
+        if (tableName.equals("hr_employee")) {
             clazz = Employee.class;
         }
 
         try {
             Employee employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
-            LOG.info("before : \n"+employee);
+            LOG.info("before : \n" + employee);
 
             hbaseUtils.deleteData(clazz, new Delete(Bytes.toBytes(key)));
 
             employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
-            LOG.info("after : \n"+employee);
+            LOG.info("after : \n" + employee);
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }
@@ -190,20 +190,21 @@ public class OnlineSynch {
 
     /**
      * 获取主键
+     *
      * @return
      */
-    private Long getKey(List<Column> columns){
-        try{
+    private Long getKey(List<Column> columns) {
+        try {
             for (Column column : columns) {
-                if(column.getName().equals("id")){
+                if (column.getName().equals("id")) {
                     return Long.valueOf(column.getValue());
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            throw  new RuntimeException("Not found primary key !");
+            throw new RuntimeException("Not found primary key !");
         }
-        throw  new RuntimeException("Not found primary key !");
+        throw new RuntimeException("Not found primary key !");
     }
 
 }

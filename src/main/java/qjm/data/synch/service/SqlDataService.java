@@ -6,10 +6,13 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import qjm.data.synch.modle.EducationExperience;
 import qjm.data.synch.modle.Employee;
+import qjm.data.synch.modle.TspCompleteCondition;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+
 
 /**
  * 加载数据数
@@ -18,16 +21,18 @@ public class SqlDataService {
 
     private SqlSessionFactory sqlSessionFactory;
 
+
     public SqlDataService(String xmlPath) {
         this.sqlSessionFactory = getSqlSessionFactory(xmlPath);
     }
 
-    public SqlDataService(SqlSessionFactory sqlSessionFactory) {
-        this.sqlSessionFactory = sqlSessionFactory;
-    }
+//    public SqlDataService(SqlSessionFactory sqlSessionFactory) {
+//        this.sqlSessionFactory = sqlSessionFactory;
+//    }
 
     /**
      * 初始化SqlSessionFactory
+     *
      * @return
      */
     public SqlSessionFactory getSqlSessionFactory(String xmlPath) {
@@ -43,11 +48,12 @@ public class SqlDataService {
 
     /**
      * 添加员工信息
+     *
      * @return
      */
-    public void putEmployee(List<Employee> list){
+    public void putEmployee(List<Employee> list) {
         SqlSession sqlSession = sqlSessionFactory.openSession();
-        sqlSession.insert("qjm.data.synch.mapper.EmployeeMapper.insertByBatch",list);
+        sqlSession.insert("qjm.data.synch.mapper.EmployeeMapper.insertByBatch", list);
         /*for (Employee e:list){
             sqlSession.insert("qjm.data.synch.mapper.EmployeeMapper.insert",e);
         }*/
@@ -56,10 +62,23 @@ public class SqlDataService {
     }
 
     /**
-     * 加载员工信息
+     * 添加员工信息
+     *
      * @return
      */
-    public List<Employee> loadEmployee(){
+    public void putEducationExperience(List<EducationExperience> list) {
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        sqlSession.insert("qjm.data.synch.mapper.EducationExperienceMapper.insertByBatch", list);
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    /**
+     * 加载员工信息
+     *
+     * @return
+     */
+    public List<Employee> loadEmployee() {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         List<Employee> list = sqlSession.selectList("qjm.data.synch.mapper.EmployeeMapper.selectAll");
         sqlSession.close();
@@ -68,9 +87,10 @@ public class SqlDataService {
 
     /**
      * 加载学历信息
+     *
      * @return
      */
-    public List<EducationExperience> loadEducationExperience(){
+    public List<EducationExperience> loadEducationExperience() {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         List<EducationExperience> list = sqlSession.selectList("qjm.data.synch.mapper.EducationExperienceMapper.selectAll");
         sqlSession.close();
@@ -78,10 +98,24 @@ public class SqlDataService {
     }
 
     /**
-     * 根据id查找员工信息
+     * 分批加载综合数据信息
+     *
      * @return
      */
-    public Employee getEmployeeById(Long id){
+    public List<TspCompleteCondition> batchLoadCompleteCondition(Map<String, Object> params) {
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        List<TspCompleteCondition> list = sqlSession.selectList("qjm.data.synch.mapper.TspConditionMapper.selectThousand", params);
+        sqlSession.close();
+        return list;
+    }
+
+
+    /**
+     * 根据id查找员工信息
+     *
+     * @return
+     */
+    public Employee getEmployeeById(Long id) {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         Employee employee = sqlSession.selectOne("qjm.data.synch.mapper.EmployeeMapper.selectByPrimaryKey", id);
         sqlSession.close();
@@ -90,25 +124,37 @@ public class SqlDataService {
 
     /**
      * 根据id查找信息
+     *
      * @return
      */
-    public <T> T getById(Long id, Class<T> clazz){
+    public <T> T getById(Long id, Class<T> clazz) {
         String clazzName = clazz.getSimpleName();
         SqlSession sqlSession = sqlSessionFactory.openSession();
-        T value = sqlSession.selectOne("qjm.data.synch.mapper."+clazzName+"Mapper.selectByPrimaryKey", id);
+        T value = sqlSession.selectOne("qjm.data.synch.mapper." + clazzName + "Mapper.selectByPrimaryKey", id);
         sqlSession.close();
         return value;
     }
 
     /**
      * 根据id查找信息
+     *
      * @return
      */
-    public <T> List<T> loadAll(Class<T> clazz){
+    public <T> List<T> loadAll(Class<T> clazz) {
         String clazzName = clazz.getSimpleName();
         SqlSession sqlSession = sqlSessionFactory.openSession();
-        List<T> values = sqlSession.selectList("qjm.data.synch.mapper."+clazzName+"Mapper.selectAll");
+        List<T> values = sqlSession.selectList("qjm.data.synch.mapper." + clazzName + "Mapper.selectAll");
         sqlSession.close();
         return values;
+    }
+
+    public void putCompleteCondition(List<TspCompleteCondition> list) {
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        sqlSession.insert("qjm.data.synch.mapper.TspConditionMapper.insertByBatch", list);
+        /*for (Employee e:list){
+            sqlSession.insert("qjm.data.synch.mapper.EmployeeMapper.insert",e);
+        }*/
+        sqlSession.commit();
+        sqlSession.close();
     }
 }

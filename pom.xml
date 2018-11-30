@@ -6,7 +6,7 @@
 
     <groupId>qjm.data.synch</groupId>
     <artifactId>mysqlToHbase</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.2</version>
 
     <dependencies>
 
@@ -58,8 +58,8 @@
     </dependencies>
 
     <build>
-        <!--<plugins>-->
-        <!--&lt;!&ndash; mybatis generator 自动生成代码插件 &ndash;&gt;-->
+        <plugins>
+        <!-- mybatis generator 自动生成代码插件 -->
         <!--<plugin>-->
         <!--<groupId>org.mybatis.generator</groupId>-->
         <!--<artifactId>mybatis-generator-maven-plugin</artifactId>-->
@@ -70,7 +70,6 @@
         <!--<verbose>true</verbose>-->
         <!--</configuration>-->
         <!--</plugin>-->
-        <!--</plugins>-->
         <!--<plugins>-->
         <!--<plugin>-->
         <!--<groupId>org.apache.maven.plugins</groupId>-->
@@ -106,7 +105,6 @@
         <!--</executions>-->
         <!--</plugin>-->
         <!--</plugins>-->
-        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

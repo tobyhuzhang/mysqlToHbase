@@ -1,8 +1,5 @@
 package qjm.data.synch.modle;
 
-import org.apache.hadoop.hbase.util.Bytes;
-import qjm.data.synch.hbase.HbaseSerializationReflect;
-
 import java.util.Date;
 
 /*
@@ -11,9 +8,10 @@ import java.util.Date;
  * 
  * 
  */
-public class TspVehicleEventDO extends HbaseSerializationReflect<EducationExperience> {
+public class TspVehicleEvent {
 	private Integer id;
-	private Float latitude;
+	private Double latitude;
+	private Double longitude;
 	private String sign;
 	private String appKey;
 	private String vin;
@@ -21,29 +19,12 @@ public class TspVehicleEventDO extends HbaseSerializationReflect<EducationExperi
 	private String event;
 	private Float totalDistance;
 	private Date timestamp;
-	private Float longitude;
 	private Date createtime;
-	
-	private String plateLicenseNo;
-	
-	
-	public String getPlateLicenseNo() {
-		return plateLicenseNo;
-	}
-	public void setPlateLicenseNo(String plateLicenseNo) {
-		this.plateLicenseNo = plateLicenseNo;
-	}
 	public Integer getId() {
 		return id;
 	}
 	public void setId(Integer id) {
 		this.id = id;
-	}
-	public Float getLatitude() {
-		return latitude;
-	}
-	public void setLatitude(Float latitude) {
-		this.latitude = latitude;
 	}
 	public String getSign() {
 		return sign;
@@ -87,20 +68,23 @@ public class TspVehicleEventDO extends HbaseSerializationReflect<EducationExperi
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
-	public Float getLongitude() {
-		return longitude;
-	}
-	public void setLongitude(Float longitude) {
-		this.longitude = longitude;
-	}
 	public Date getCreatetime() {
 		return createtime;
 	}
 	public void setCreatetime(Date createtime) {
 		this.createtime = createtime;
 	}
-	public byte[] getKey() {
-		return Bytes.toBytes(id);
+	public Double getLatitude() {
+		return latitude;
+	}
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+	public Double getLongitude() {
+		return longitude;
+	}
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
 	}
 	
 }

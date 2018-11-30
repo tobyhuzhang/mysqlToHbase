@@ -73,7 +73,6 @@ public abstract class HbaseSerializationReflect<T> implements HbaseSerialization
                     Class cla = field.getType();
                     //将值转为二进制数组
                     byte[] arr = toByteArray(cla, val);
-
                     put.add(Bytes.toBytes(getFamilyName(clazz, field)), Bytes.toBytes(getColumnName(field)), arr);
                 }
             } catch (Exception e) {
@@ -148,10 +147,10 @@ public abstract class HbaseSerializationReflect<T> implements HbaseSerialization
             return Bytes.toBytes(value);
         }else if(clazz == float.class || clazz == Float.class){//单精度
             Float value = (Float) obj;
-            return Bytes.toBytes(value);
+            return Bytes.toBytes(String.valueOf(value));
         }else if(clazz == long.class || clazz == Long.class) {//长整型
             Long value = (Long) obj;
-            return Bytes.toBytes(value);
+            return Bytes.toBytes(String.valueOf(value));
         }else if(clazz == Date.class) {//日期
             Date value = (Date) obj;
             return Bytes.toBytes(value.getTime());

@@ -1,6 +1,7 @@
 package qjm.data.synch.mapper;
 
 import qjm.data.synch.modle.EducationExperience;
+import qjm.data.synch.modle.Employee;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface EducationExperienceMapper {
     int updateByPrimaryKey(EducationExperience record);
 
     List<EducationExperience> selectAll();
+
+    void insertByBatch(List<EducationExperience> list);
 }
