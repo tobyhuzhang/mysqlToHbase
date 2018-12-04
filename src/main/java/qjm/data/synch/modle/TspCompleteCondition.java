@@ -264,6 +264,6 @@ public class TspCompleteCondition extends HbaseSerializationReflect<TspCompleteC
 	}
 
 	public byte[] getKey() {
-		return Bytes.toBytes(vin+"."+timestamp.getTime());
+		return Bytes.toBytes(vin+"."+acquisitionTime.getTime()/1000);
 	}
 }

@@ -10,7 +10,6 @@ import qjm.data.synch.modle.Employee;
 import qjm.data.synch.modle.TspCompleteCondition;
 import qjm.data.synch.service.SqlDataService;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,51 +28,61 @@ public class OffLineSynch {
         SqlDataService sqlDataService = new SqlDataService("SqlMapConfig.xml");
 
         //加载员工信息
-        List<Employee> employees = sqlDataService.loadEmployee();
-//        //加载学历信息
-//        List<EducationExperience> educations = sqlDataService.loadEducationExperience();
-        HbaseUtils hbaseUtils = new HbaseUtils();
-        //将数据添加到hbase
-        try {
-
-            hbaseUtils.checkAndCreateTable(Employee.class);
-            hbaseUtils.putData(employees);
-            LOG.info("插入HBase职工数据"+employees);
-//            hbaseUtils.checkAndCreateTable(EducationExperience.class);
-//            hbaseUtils.putData(educations);
-//            LOG.info("插入HBase教育经历数据"+educations);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            hbaseUtils.close();
-        }
-
-//        Map<String, Object> params = new HashMap<String, Object>(16);
-//        int offset = 0;//开始位置，从0行开始查询
-//        int limit = 10000;//偏移量
-//        List<TspCompleteCondition> tccList = null;
-//        SqlSession sqlSession = sqlDataService.getSqlSessionFactory("SqlMapConfig.xml").openSession();
-//        int count = 0;
+//        List<Employee> employees = sqlDataService.loadEmployee();
+////        //加载学历信息
+////        List<EducationExperience> educations = sqlDataService.loadEducationExperience();
 //        HbaseUtils hbaseUtils = new HbaseUtils();
+//        //将数据添加到hbase
 //        try {
-//            do {
-//                params.put("offset", offset);
-//                params.put("limit", limit);
-//                tccList = sqlSession.selectList("qjm.data.synch.mapper.TspConditionMapper.selectThousand", params);
-//                LOG.info("插入HBase 综合数据" + tccList.size() + "条");
-//                hbaseUtils.checkAndCreateTable(TspCompleteCondition.class);
-//                hbaseUtils.putData(tccList);
-////                Scan scan = new Scan();
-////                List<TspCompleteCondition> list = hbaseUtils.scanData(scan, TspCompleteCondition.class);
-////                    System.out.println("插入HBase"+list.size());
-//                offset += limit;
-//            } while (tccList.size()>0);
+//            hbaseUtils.checkAndCreateTable(Employee.class);
+//            hbaseUtils.putData(employees);
+//            LOG.info("插入HBase职工数据"+employees);
+////            hbaseUtils.checkAndCreateTable(EducationExperience.class);
+////            hbaseUtils.putData(educations);
+////            LOG.info("插入HBase教育经历数据"+educations);
+//            Scan scan = new Scan();
+//                List<Employee> list = hbaseUtils.scanData(scan, Employee.class);
+//                    System.out.println("插入HBase"+list.size());
 //        } catch (Exception e) {
 //            e.printStackTrace();
-//        } finally {
+//        }finally {
 //            hbaseUtils.close();
-//            sqlSession.close();
 //        }
+
+        Map<String, Object> params = new HashMap<String, Object>(16);
+        int offset = 0;//开始位置，从0行开始查询
+        int limit = 10000;//偏移量
+        List<TspCompleteCondition> tccList = null;
+        SqlSession sqlSession = sqlDataService.getSqlSessionFactory("SqlMapConfig.xml").openSession();
+        HbaseUtils hbaseUtils = new HbaseUtils();
+        long startTime = System.currentTimeMillis();
+        try {
+            do {
+                params.put("offset", offset);
+                params.put("limit", limit);
+                tccList = sqlSession.selectList("qjm.data.synch.mapper.TspConditionMapper.selectThousand", params);
+                LOG.info("插入HBase 综合数据" + tccList.size() + "条");
+                hbaseUtils.checkAndCreateTable(TspCompleteCondition.class);
+                hbaseUtils.putData(tccList);
+
+//                Scan scan = new Scan();
+//                List<TspCompleteCondition> list = hbaseUtils.scanData(scan, TspCompleteCondition.class);
+//                for (TspCompleteCondition tsp : list) {
+//                    if (tsp.getTemperature1() != null)
+//                        System.out.println("查询对象：" + tsp.getTemperature1());
+//                    System.out.println("查询rowkey：" + tsp.getVin()+"."+tsp.getAcquisitionTime().getTime());
+//                }
+//                System.out.println("读入HBase" + list.size());
+                offset += limit;
+            } while (tccList.size() > 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            hbaseUtils.close();
+            sqlSession.close();
+        }
+        long endTime = System.currentTimeMillis();
+        LOG.info("导入时间：" + (endTime - startTime) + "ms");
     }
 
     /**

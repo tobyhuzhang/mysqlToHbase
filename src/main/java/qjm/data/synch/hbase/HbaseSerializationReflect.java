@@ -31,7 +31,6 @@ public abstract class HbaseSerializationReflect<T> implements HbaseSerialization
 
             // 设置些属性是可以访问的
             field.setAccessible(true);
-
             try {
                 //获取属性值
                 byte[] arr = result.getValue(Bytes.toBytes(getFamilyName(clazz, field)), Bytes.toBytes(getColumnName(field)));
@@ -147,10 +146,10 @@ public abstract class HbaseSerializationReflect<T> implements HbaseSerialization
             return Bytes.toBytes(value);
         }else if(clazz == float.class || clazz == Float.class){//单精度
             Float value = (Float) obj;
-            return Bytes.toBytes(String.valueOf(value));
+            return Bytes.toBytes(value);
         }else if(clazz == long.class || clazz == Long.class) {//长整型
             Long value = (Long) obj;
-            return Bytes.toBytes(String.valueOf(value));
+            return Bytes.toBytes(value);
         }else if(clazz == Date.class) {//日期
             Date value = (Date) obj;
             return Bytes.toBytes(value.getTime());
