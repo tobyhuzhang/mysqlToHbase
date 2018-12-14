@@ -4,12 +4,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.ibatis.session.SqlSession;
+import qjm.data.synch.hbase.DateUtils;
 import qjm.data.synch.hbase.HbaseUtils;
 import qjm.data.synch.modle.EducationExperience;
 import qjm.data.synch.modle.Employee;
 import qjm.data.synch.modle.TspCompleteCondition;
 import qjm.data.synch.service.SqlDataService;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +84,7 @@ public class OffLineSynch {
             sqlSession.close();
         }
         long endTime = System.currentTimeMillis();
-        LOG.info("导入时间：" + (endTime - startTime) + "ms");
+        LOG.info("导入时间：" + (endTime - startTime) + "s");
     }
 
     /**
@@ -112,6 +114,31 @@ public class OffLineSynch {
         sqlDataService.putEmployee(employees);
         sqlDataService.putEducationExperience(educations);
         //sqlDataService.putCompleteCondition(tspCompleteCondition);
+
+    }
+
+    /**
+     * 根据vin和时间段查询
+     */
+    public void selectByVin() {
+        long start=System.currentTimeMillis()/1000;
+        HbaseUtils hbaseUtils = new HbaseUtils();
+        try {
+            Date fromTime = DateUtils.parse("2018-10-19 00:00:00");
+            Date endTime = DateUtils.parse("2018-12-25 00:00:00");
+            List<TspCompleteCondition> list = hbaseUtils.scanDataByTime("tspCompleteCondition", TspCompleteCondition.class, "LEFYECG20HHNA6645", fromTime, endTime);
+            if(list!=null&&list.size()>0) {
+                System.out.println("总条数："+list.size());
+//                for(TspCompleteCondition tcc:list) {
+//                    System.out.println("vin----"+tcc.getVin());
+//                    System.out.println("atime--"+DateUtils.format(tcc.getAcquisitionTime(), DateUtils.FORMAT_FULL_CN));
+//                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        long end=System.currentTimeMillis()/1000;
+        LOG.info("查询时间：" + (end - start) + "s");
 
     }
 }

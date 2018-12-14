@@ -13,6 +13,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import qjm.data.synch.hbase.HbaseSerialization;
 import qjm.data.synch.hbase.HbaseUtils;
 import qjm.data.synch.modle.Employee;
+import qjm.data.synch.modle.TspCompleteCondition;
 import qjm.data.synch.service.SqlDataService;
 
 import java.net.InetSocketAddress;
@@ -33,29 +34,28 @@ public class OnlineSynch {
     public void synchToHbase() {
         // 创建链接
         CanalConnector connector = CanalConnectors.newSingleConnector(
-                new InetSocketAddress("192.168.11.234",
+                new InetSocketAddress("192.168.11.239",
                         11111),
                 "example",
-                "",
-                ""
+                "canal",
+                "canal"
         );
         int batchSize = 1000;
         Long batchId = null;
         try {
             connector.connect();
             //指定监听数据库
-            connector.subscribe("grg_hr\\..*");
+            connector.subscribe("tspdata\\ims_tsp_completecondition");
             connector.rollback();
             while (true) {
                 // 获取指定数量的数据
                 Message message = connector.getWithoutAck(batchSize);
-                LOG.info(message.toString());
                 batchId = message.getId();
                 int size = message.getEntries().size();
                 if (batchId == -1 || size == 0) {
                     LOG.info("waitting...");
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                     }
                 } else {
@@ -139,18 +139,29 @@ public class OnlineSynch {
         if (tableName.equals("hr_employee")) {
             //serialization = sqlDataService.getEmployeeById(key);
             serialization = sqlDataService.getById(key, Employee.class);
+        }else if(tableName.equals("hr_employee")) {
+            //serialization = sqlDataService.getEmployeeById(key);
+            serialization = sqlDataService.getById(key, Employee.class);
         }
 
         if (serialization != null) {
             try {
-                Employee employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
-                LOG.info("before : \n" + employee);
+//                Employee employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
+//                LOG.info("before : \n" + employee);
+//
+//                hbaseUtils.putData(serialization);
+//                LOG.info("putData : \n" + employee);
+//
+//                employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
+//                LOG.info("before : \n" + employee);
+                TspCompleteCondition tcc = hbaseUtils.getData(new Get(Bytes.toBytes(key)), TspCompleteCondition.class);
+                LOG.info("before : \n" + tcc);
 
                 hbaseUtils.putData(serialization);
-                LOG.info("putData : \n" + employee);
+                LOG.info("putData : \n" + tcc);
 
-                employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
-                LOG.info("before : \n" + employee);
+                tcc = hbaseUtils.getData(new Get(Bytes.toBytes(key)), TspCompleteCondition.class);
+                LOG.info("before : \n" + tcc);
             } catch (Exception e) {
                 LOG.error(e.getMessage());
             }
@@ -172,16 +183,25 @@ public class OnlineSynch {
         //根据不同表做处理
         if (tableName.equals("hr_employee")) {
             clazz = Employee.class;
+        }else if (tableName.equals("tspCompleteCondition")){
+            clazz = TspCompleteCondition.class;
         }
 
         try {
-            Employee employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
-            LOG.info("before : \n" + employee);
+//            Employee employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
+//            LOG.info("before : \n" + employee);
+//
+//            hbaseUtils.deleteData(clazz, new Delete(Bytes.toBytes(key)));
+//
+//            employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
+//            LOG.info("after : \n" + employee);
+            TspCompleteCondition tcc = hbaseUtils.getData(new Get(Bytes.toBytes(key)), TspCompleteCondition.class);
+            LOG.info("before : \n" + tcc);
 
             hbaseUtils.deleteData(clazz, new Delete(Bytes.toBytes(key)));
 
-            employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
-            LOG.info("after : \n" + employee);
+            tcc = hbaseUtils.getData(new Get(Bytes.toBytes(key)), TspCompleteCondition.class);
+            LOG.info("after : \n" + tcc);
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }
@@ -197,6 +217,8 @@ public class OnlineSynch {
         try {
             for (Column column : columns) {
                 if (column.getName().equals("id")) {
+                    return Long.valueOf(column.getValue());
+                }else if (column.getName().equals("Id")) {
                     return Long.valueOf(column.getValue());
                 }
             }

@@ -18,17 +18,17 @@ public class SimpleCanalClient {
     public static void main(String args[]) {
         // 创建链接
         CanalConnector connector = CanalConnectors.newSingleConnector(
-                new InetSocketAddress("192.168.11.234",
+                new InetSocketAddress("192.168.11.239",
                         11111),
                 "example",
-                "",
-                ""
+                "canal",
+                "canal"
         );
         int batchSize = 1000;
         Long batchId  = null;
         try {
             connector.connect();
-            connector.subscribe(".*\\..*");
+            connector.subscribe("tspdata\\ims_tsp_completecondition");
             connector.rollback();
             while (true) {
                 // 获取指定数量的数据

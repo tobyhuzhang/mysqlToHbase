@@ -6,11 +6,14 @@ import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.filter.*;
+import org.apache.hadoop.hbase.util.Bytes;
 import qjm.data.synch.annotation.Family;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -299,4 +302,33 @@ public class HbaseUtils {
            hbaseAdmin.close();
        }
     }
+
+    public <T extends HbaseSerialization> List<T> scanDataByTime(String tableName, Class<T> clazz, String vin, Date fromTime, Date endTime) throws Exception {
+        List<Filter> filters = new ArrayList<Filter>();
+
+        Filter pf = new PrefixFilter(Bytes.toBytes(vin)); // OK  筛选匹配行键的前缀成功的行
+        filters.add(pf);
+
+        Filter filterEndTime = new SingleColumnValueFilter(Bytes.toBytes("option"), Bytes.toBytes("acquisitionTime"), CompareFilter.CompareOp.LESS,Bytes.toBytes(endTime.getTime()));
+        filters.add(filterEndTime);
+        Filter filterFromTime = new SingleColumnValueFilter(Bytes.toBytes("option"), Bytes.toBytes("acquisitionTime"), CompareFilter.CompareOp.GREATER,Bytes.toBytes(fromTime.getTime()));
+        filters.add(filterFromTime);
+        FilterList filterList1 = new FilterList(filters);
+
+        Scan scan = new Scan();
+        scan.setFilter(filterList1);
+
+        Table table = connection.getTable(TableName.valueOf(tableName));
+        ResultScanner scanner = table.getScanner(scan);
+
+        List<T> list = new ArrayList<T>();
+        for (Result result : scanner) {
+            T modle = clazz.newInstance();
+            modle.deserializing(result);
+            list.add(modle);
+        }
+        table.close();
+        return list;
+    }
+
 }
