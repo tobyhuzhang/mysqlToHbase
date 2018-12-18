@@ -12,7 +12,6 @@ qjm\data\synch\annotation\Clipping.class
 qjm\data\synch\modle\TspVehicleEvent.class
 qjm\data\synch\online\OnlineSynch.class
 qjm\data\synch\modle\EducationExperience.class
-qjm\data\synch\modle\Vehicle.class
 qjm\data\synch\annotation\Family.class
 qjm\data\synch\hbase\DateUtils.class
 qjm\data\synch\DataSynchApplication.class

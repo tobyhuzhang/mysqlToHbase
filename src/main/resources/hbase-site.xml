@@ -40,7 +40,7 @@
     <property>
         <name>hbase.rootdir</name>
         <value>hdfs://slave239:9000/hbase</value>
-        <description>The directory shared byregion servers.</description>
+        <description>The directory shared by region servers.</description>
     </property>
     <!-- hbase的端口 -->
     <property>

@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="qjm.data.synch.mapper.TspConditionMapper">
-    <insert id="insertCondition" parameterType="qjm.data.synch.modle.TspVehicleCondition">
-        insert into
-        ims_tspvehiclecondition(AcquisitionTime,batteryVoltage,EngineSpeed,Fuel,Latitude,Longitude,TotalDistance,VehBatSOC,VehicleSpeed,VIN,Timestamp)
-        value
-        (#{acquisitionTime},#{batteryVoltage},#{engineSpeed},#{fuel},#{latitude},#{longitude},#{totalDistance},#{vehBatSOC},#{vehicleSpeed},#{vin},#{timestamp})
-        <!--注意属性名区分大小写 -->
-    </insert>
+<mapper namespace="qjm.data.synch.mapper.TspCompleteConditionMapper">
     <insert id="insertEvent" parameterType="qjm.data.synch.modle.TspVehicleEvent">
         insert into
         ims_tspvehicleevent(Latitude,VIN,acquisitionTime,Event,TotalDistance,Timestamp,Longitude)
@@ -39,10 +32,14 @@
         <!--注意属性名区分大小写 -->
     </insert>
 
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultType="qjm.data.synch.modle.TspCompleteCondition">
+        select
+        AcquisitionTime,batteryVoltage,EngineSpeed,Fuel,Latitude,Longitude,TotalDistance,VehBatSOC,VehicleSpeed,VIN,Timestamp,temperature1,temperature2,temperature3,temperature4,temperature5,humidity1,humidity2,humidity3,humidity4,humidity5,photoreceptor1,photoreceptor2,photoreceptor3,photoreceptor4,photoreceptor5,temptimestamp1,temptimestamp2,temptimestamp3,temptimestamp4,temptimestamp5,plateLicenseNo
+        from ims_tsp_completecondition where id=#{id}
+    </select>
     <select id="selectThousand" parameterType="java.util.Map" resultType="qjm.data.synch.modle.TspCompleteCondition">
         select
         AcquisitionTime,batteryVoltage,EngineSpeed,Fuel,Latitude,Longitude,TotalDistance,VehBatSOC,VehicleSpeed,VIN,Timestamp,temperature1,temperature2,temperature3,temperature4,temperature5,humidity1,humidity2,humidity3,humidity4,humidity5,photoreceptor1,photoreceptor2,photoreceptor3,photoreceptor4,photoreceptor5,temptimestamp1,temptimestamp2,temptimestamp3,temptimestamp4,temptimestamp5,plateLicenseNo
-        <!--<include refid="Base_Column_List" />-->
         from ims_tsp_completecondition order by Id desc
         <if test="offset != null and limit != null">
             limit #{offset}, #{limit}

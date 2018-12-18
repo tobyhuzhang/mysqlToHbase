@@ -2,7 +2,6 @@ package qjm.data.synch.online;
 
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
-import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.CanalEntry.*;
 import com.alibaba.otter.canal.protocol.Message;
 import org.apache.commons.logging.Log;
@@ -14,10 +13,13 @@ import qjm.data.synch.hbase.HbaseSerialization;
 import qjm.data.synch.hbase.HbaseUtils;
 import qjm.data.synch.modle.Employee;
 import qjm.data.synch.modle.TspCompleteCondition;
+import qjm.data.synch.modle.TspVehicleCondition;
 import qjm.data.synch.service.SqlDataService;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 实时同步数据
@@ -34,47 +36,36 @@ public class OnlineSynch {
     public void synchToHbase() {
         // 创建链接
         CanalConnector connector = CanalConnectors.newSingleConnector(
-                new InetSocketAddress("192.168.11.239",
-                        11111),
-                "example",
-                "canal",
-                "canal"
-        );
-        int batchSize = 1000;
-        Long batchId = null;
-        try {
-            connector.connect();
-            //指定监听数据库
-            connector.subscribe("tspdata\\ims_tsp_completecondition");
-            connector.rollback();
-            while (true) {
-                // 获取指定数量的数据
-                Message message = connector.getWithoutAck(batchSize);
-                batchId = message.getId();
-                int size = message.getEntries().size();
-                if (batchId == -1 || size == 0) {
-                    LOG.info("waitting...");
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                    }
-                } else {
-                    LOG.info(String.format("\nmessage[batchId=%s,size=%s]", batchId, size));
-                    handleEntry(message.getEntries());
+                new InetSocketAddress("192.168.11.239", 11111), "example", "", "");
+
+        connector.connect();
+//        connector.subscribe(".*\\..*");
+        connector.subscribe("tspdata\\ims_tspvehiclecondition");
+        connector.rollback();
+
+        while (true) {
+            Message message = connector.getWithoutAck(100);
+            long batchId = message.getId();
+            if (batchId == -1 || message.getEntries().isEmpty()) {
+                System.out.println("sleep");
+                try {
+                    Thread.sleep(3000);
+                    continue;
+                } catch (InterruptedException e) {
+                    LOG.error("Error: " + e.getMessage());
+                    throw new RuntimeException(e);
                 }
-
-                connector.ack(batchId); // 提交确认
-                LOG.info("提交确认...");
             }
-        } catch (Exception e) {
-            // 处理失败, 回滚数据
-            if (batchId != null) connector.rollback(batchId);
-
-            LOG.error("Error: " + e.getMessage());
-            throw new RuntimeException(e);
-        } finally {
-            connector.disconnect();
+            handleEntry(message.getEntries());
+            connector.ack(batchId);
         }
+    }
+
+    private static void printColumns(List<Column> columns) {
+        String line = columns.stream()
+                .map(column -> column.getName() + "=" + column.getValue())
+                .collect(Collectors.joining(","));
+        System.out.println(line);
     }
 
     /**
@@ -85,7 +76,7 @@ public class OnlineSynch {
     private void handleEntry(List<Entry> entries) {
         //循环事件
         for (Entry entry : entries) {
-            if (entry.getEntryType() == EntryType.TRANSACTIONBEGIN || entry.getEntryType() == EntryType.TRANSACTIONEND) {
+            if (entry.getEntryType() != EntryType.ROWDATA) {
                 continue;
             }
 
@@ -95,30 +86,51 @@ public class OnlineSynch {
             } catch (Exception e) {
                 throw new RuntimeException("ERROR ## parser of eromanga-event has an error , data:" + entry.toString(), e);
             }
-
-            //输出事件信息
-            CanalEntry.EventType eventType = rowChange.getEventType();
             Header header = entry.getHeader();
+            for (RowData rowData : rowChange.getRowDatasList()) {
+                switch (rowChange.getEventType()) {
+                    case INSERT:
+                    case UPDATE:
+                        System.out.print("UPSERT ");
+                        printColumns(rowData.getAfterColumnsList());
+
+                        if ("ims_tspvehiclecondition".equals(entry.getHeader().getTableName())) {
+                            updateData(header.getTableName(), rowData.getAfterColumnsList());
+                        } else if ("ims_tsp_completecondition".equals(entry.getHeader().getTableName())) {
+                           // updateData(header.getTableName(), rowData.getAfterColumnsList());
+                        }
+                        break;
+
+                    case DELETE:
+                        System.out.print("DELETE ");
+                        printColumns(rowData.getBeforeColumnsList());
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            //输出事件信息
             LOG.info(String.format("\n================&gt; binlog[%s:%s] , name[%s,%s] , eventType : %s",
                     header.getLogfileName(), header.getLogfileOffset(),
                     header.getSchemaName(), header.getTableName(),
-                    eventType));
-
-            //解析事件
-            for (CanalEntry.RowData rowData : rowChange.getRowDatasList()) {
-                if (eventType == EventType.DELETE) {
-                    LOG.info("\n-------&gt; delete");
-                    deleteData(header.getTableName(), rowData.getBeforeColumnsList());
-                } else if (eventType == EventType.INSERT) {
-                    LOG.info("\n-------&gt; insert");
-                    updateData(header.getTableName(), rowData.getAfterColumnsList());
-                } else if (eventType == EventType.UPDATE) {
-                    //LOG.info("\n-------&gt; before");
-                    //printColumn(rowData.getBeforeColumnsList());
-                    LOG.info("\n-------&gt; after");
-                    updateData(header.getTableName(), rowData.getAfterColumnsList());
-                }
-            }
+                    entry.getEntryType()));
+//
+//            //解析事件
+//            for (CanalEntry.RowData rowData : rowChange.getRowDatasList()) {
+//                if (eventType == EventType.DELETE) {
+//                    LOG.info("\n-------&gt; delete");
+//                    deleteData(header.getTableName(), rowData.getBeforeColumnsList());
+//                } else if (eventType == EventType.INSERT) {
+//                    LOG.info("\n-------&gt; insert");
+//                    updateData(header.getTableName(), rowData.getAfterColumnsList());
+//                } else if (eventType == EventType.UPDATE) {
+//                    //LOG.info("\n-------&gt; before");
+//                    //printColumn(rowData.getBeforeColumnsList());
+//                    LOG.info("\n-------&gt; after");
+//                    updateData(header.getTableName(), rowData.getAfterColumnsList());
+//                }
+//            }
         }
     }
 
@@ -136,16 +148,24 @@ public class OnlineSynch {
 
         HbaseSerialization serialization = null;
         //根据不同表做处理
-        if (tableName.equals("hr_employee")) {
-            //serialization = sqlDataService.getEmployeeById(key);
-            serialization = sqlDataService.getById(key, Employee.class);
-        }else if(tableName.equals("hr_employee")) {
-            //serialization = sqlDataService.getEmployeeById(key);
-            serialization = sqlDataService.getById(key, Employee.class);
+        try {
+            if (tableName.equals("hr_employee")) {
+                serialization = sqlDataService.getById(key, Employee.class);
+            } else if (tableName.equals("ims_tspvehiclecondition")) {
+                serialization = sqlDataService.getById(key, TspVehicleCondition.class);
+                hbaseUtils.checkAndCreateTable(TspVehicleCondition.class);
+            } else if (tableName.equals("ims_tsp_completecondition")) {
+                serialization = sqlDataService.getById(key, TspCompleteCondition.class);
+                hbaseUtils.checkAndCreateTable(TspCompleteCondition.class);
+            }
+        } catch (IOException e) {
+            LOG.error(e.getMessage());
         }
 
         if (serialization != null) {
             try {
+
+                hbaseUtils.putData(serialization);
 //                Employee employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
 //                LOG.info("before : \n" + employee);
 //
@@ -154,14 +174,14 @@ public class OnlineSynch {
 //
 //                employee = hbaseUtils.getData(new Get(Bytes.toBytes(key)), Employee.class);
 //                LOG.info("before : \n" + employee);
-                TspCompleteCondition tcc = hbaseUtils.getData(new Get(Bytes.toBytes(key)), TspCompleteCondition.class);
-                LOG.info("before : \n" + tcc);
-
-                hbaseUtils.putData(serialization);
-                LOG.info("putData : \n" + tcc);
-
-                tcc = hbaseUtils.getData(new Get(Bytes.toBytes(key)), TspCompleteCondition.class);
-                LOG.info("before : \n" + tcc);
+//                TspCompleteCondition tcc = hbaseUtils.getData(new Get(Bytes.toBytes(key)), TspCompleteCondition.class);
+//                LOG.info("before : \n" + tcc);
+//
+//                hbaseUtils.putData(serialization);
+//                LOG.info("putData : \n" + tcc);
+//
+//                tcc = hbaseUtils.getData(new Get(Bytes.toBytes(key)), TspCompleteCondition.class);
+//                LOG.info("before : \n" + tcc);
             } catch (Exception e) {
                 LOG.error(e.getMessage());
             }
@@ -183,7 +203,7 @@ public class OnlineSynch {
         //根据不同表做处理
         if (tableName.equals("hr_employee")) {
             clazz = Employee.class;
-        }else if (tableName.equals("tspCompleteCondition")){
+        } else if (tableName.equals("tspCompleteCondition")) {
             clazz = TspCompleteCondition.class;
         }
 
@@ -218,7 +238,7 @@ public class OnlineSynch {
             for (Column column : columns) {
                 if (column.getName().equals("id")) {
                     return Long.valueOf(column.getValue());
-                }else if (column.getName().equals("Id")) {
+                } else if (column.getName().equals("Id")) {
                     return Long.valueOf(column.getValue());
                 }
             }

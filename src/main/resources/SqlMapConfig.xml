@@ -22,6 +22,7 @@
     <mappers>
         <!--<mapper resource="mapping/EmployeeMapper.xml"></mapper>-->
         <!--<mapper resource="mapping/EducationExperienceMapper.xml"></mapper>-->
-        <mapper resource="mapping/TspConditionMapper.xml"></mapper>
+        <!--<mapper resource="mapping/TspCompleteConditionMapper.xml"></mapper>-->
+        <mapper resource="mapping/TspVehicleConditionMapper.xml"></mapper>
     </mappers>
 </configuration>

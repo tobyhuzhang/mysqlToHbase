@@ -9,6 +9,7 @@ import qjm.data.synch.hbase.HbaseUtils;
 import qjm.data.synch.modle.EducationExperience;
 import qjm.data.synch.modle.Employee;
 import qjm.data.synch.modle.TspCompleteCondition;
+import qjm.data.synch.modle.TspVehicleCondition;
 import qjm.data.synch.service.SqlDataService;
 
 import java.util.Date;
@@ -62,9 +63,12 @@ public class OffLineSynch {
             do {
                 params.put("offset", offset);
                 params.put("limit", limit);
-                tccList = sqlSession.selectList("qjm.data.synch.mapper.TspConditionMapper.selectThousand", params);
+//                tccList = sqlSession.selectList("qjm.data.synch.mapper.TspCompleteConditionMapper.selectThousand", params);
+//                LOG.info("插入HBase 综合数据" + tccList.size() + "条");
+//                hbaseUtils.checkAndCreateTable(TspCompleteCondition.class);
+                tccList = sqlSession.selectList("qjm.data.synch.mapper.TspVehicleConditionMapper.selectThousand", params);
                 LOG.info("插入HBase 综合数据" + tccList.size() + "条");
-                hbaseUtils.checkAndCreateTable(TspCompleteCondition.class);
+                hbaseUtils.checkAndCreateTable(TspVehicleCondition.class);
                 hbaseUtils.putData(tccList);
 
 //                Scan scan = new Scan();

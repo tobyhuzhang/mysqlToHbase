@@ -13,7 +13,6 @@ E:\mysqlToHbase\src\main\java\qjm\data\synch\service\SqlDataService.java
 E:\mysqlToHbase\src\main\java\qjm\data\synch\mapper\EducationExperienceMapper.java
 E:\mysqlToHbase\src\main\java\qjm\data\synch\online\OnlineSynch.java
 E:\mysqlToHbase\src\main\java\qjm\data\synch\modle\TspVehicleCondition.java
-E:\mysqlToHbase\src\main\java\qjm\data\synch\modle\Vehicle.java
 E:\mysqlToHbase\src\main\java\qjm\data\synch\mapper\EmployeeMapper.java
 E:\mysqlToHbase\src\main\java\qjm\data\synch\annotation\Clipping.java
 E:\mysqlToHbase\src\main\java\qjm\data\synch\annotation\Table.java

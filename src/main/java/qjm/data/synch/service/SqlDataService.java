@@ -104,7 +104,7 @@ public class SqlDataService {
      */
     public List<TspCompleteCondition> batchLoadCompleteCondition(Map<String, Object> params) {
         SqlSession sqlSession = sqlSessionFactory.openSession();
-        List<TspCompleteCondition> list = sqlSession.selectList("qjm.data.synch.mapper.TspConditionMapper.selectThousand", params);
+        List<TspCompleteCondition> list = sqlSession.selectList("qjm.data.synch.mapper.TspCompleteConditionMapper.selectThousand", params);
         sqlSession.close();
         return list;
     }
@@ -150,7 +150,7 @@ public class SqlDataService {
 
     public void putCompleteCondition(List<TspCompleteCondition> list) {
         SqlSession sqlSession = sqlSessionFactory.openSession();
-        sqlSession.insert("qjm.data.synch.mapper.TspConditionMapper.insertByBatch", list);
+        sqlSession.insert("qjm.data.synch.mapper.TspCompleteConditionMapper.insertByBatch", list);
         /*for (Employee e:list){
             sqlSession.insert("qjm.data.synch.mapper.EmployeeMapper.insert",e);
         }*/
