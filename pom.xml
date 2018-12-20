@@ -4,12 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>qjm.data.synch</groupId>
+    <groupId>ytsk.data.synch</groupId>
     <artifactId>mysqlToHbase</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.0</version>
 
     <dependencies>
-
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -46,11 +45,6 @@
             <version>1.2.8</version>
         </dependency>
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
             <groupId>com.alibaba.otter</groupId>
             <artifactId>canal.client</artifactId>
             <version>1.1.0</version>
@@ -59,77 +53,26 @@
 
     <build>
         <plugins>
-        <!-- mybatis generator 自动生成代码插件 -->
-        <!--<plugin>-->
-        <!--<groupId>org.mybatis.generator</groupId>-->
-        <!--<artifactId>mybatis-generator-maven-plugin</artifactId>-->
-        <!--<version>1.3.2</version>-->
-        <!--<configuration>-->
-        <!--<configurationFile>${basedir}/src/main/resources/generator/generatorConfig.xml</configurationFile>-->
-        <!--<overwrite>true</overwrite>-->
-        <!--<verbose>true</verbose>-->
-        <!--</configuration>-->
-        <!--</plugin>-->
-        <!--<plugins>-->
-        <!--<plugin>-->
-        <!--<groupId>org.apache.maven.plugins</groupId>-->
-        <!--<artifactId>maven-jar-plugin</artifactId>-->
-        <!--<version>2.4</version>-->
-        <!--<configuration>-->
-        <!--<archive>-->
-        <!--<manifest>-->
-        <!--<addClasspath>true</addClasspath>-->
-        <!--<mainClass>qjm.data.synch.DataSynchApplication</mainClass>-->
-        <!--<classpathPrefix>lib/</classpathPrefix>-->
-        <!--</manifest>-->
-        <!--</archive>-->
-        <!--</configuration>-->
-        <!--</plugin>-->
-        <!--<plugin>-->
-        <!--<groupId>org.apache.maven.plugins</groupId>-->
-        <!--<artifactId>maven-dependency-plugin</artifactId>-->
-        <!--<version>2.8</version>-->
-        <!--<executions>-->
-        <!--<execution>-->
-        <!--<id>copy-dependencies</id>-->
-        <!--<phase>package</phase>-->
-        <!--<goals>-->
-        <!--<goal>copy-dependencies</goal>-->
-        <!--</goals>-->
-        <!--<configuration>-->
-        <!--<outputDirectory>-->
-        <!--${project.build.directory}/lib/-->
-        <!--</outputDirectory>-->
-        <!--</configuration>-->
-        <!--</execution>-->
-        <!--</executions>-->
-        <!--</plugin>-->
-        <!--</plugins>-->
+            <!--mybatis generator 自动生成代码插件-->
+            <!--<plugin>-->
+            <!--<groupId>org.mybatis.generator</groupId>-->
+            <!--<artifactId>mybatis-generator-maven-plugin</artifactId>-->
+            <!--<version>1.3.2</version>-->
+            <!--<configuration>-->
+            <!--<configurationFile>${basedir}/src/main/resources/generator/generatorConfig.xml</configurationFile>-->
+            <!--<overwrite>true</overwrite>-->
+            <!--<verbose>true</verbose>-->
+            <!--</configuration>-->
+            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>qjm.data.synch.DataSynchApplication</mainClass>
-                                </transformer>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer">
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

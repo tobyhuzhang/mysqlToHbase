@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ytsk.data.synch.mapper.TemperatureRecordMapper">
+    <insert id="insertTempRecord" parameterType="ytsk.data.synch.model.TemperatureRecord">
+        insert into
+        ims_temp_record(VIN,deviceNumber,temperature1,timestamp,humidity,latitude,longitude,photoreceptor,electricity,maxStrength,devicetype)
+        value
+        (#{vin},#{deviceNumber},#{temperature1},#{timestamp},#{humidity},#{latitude},#{longitude},#{photoreceptor},#{electricity},#{maxStrength},#{deviceType})
+    </insert>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultType="ytsk.data.synch.model.TemperatureRecord">
+        select
+            VIN,deviceNumber,temperature1,timestamp,humidity,latitude,longitude,photoreceptor,electricity,maxStrength,devicetype
+        from ims_temp_record where id=#{id}
+    </select>
+    <select id="selectThousand" parameterType="java.util.Map" resultType="ytsk.data.synch.model.TemperatureRecord">
+        select
+        VIN,deviceNumber,temperature1,timestamp,humidity,latitude,longitude,photoreceptor,electricity,maxStrength,devicetype
+        from ims_temp_record order by Id
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <insert id="insertByBatch" parameterType="java.util.List">
+        insert into ims_temp_record
+        (VIN,deviceNumber,temperature1,timestamp,humidity,latitude,longitude,photoreceptor,electricity,maxStrength,devicetype)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{vin},#{deviceNumber},#{temperature1},#{timestamp},#{humidity},#{latitude},#{longitude},#{photoreceptor},#{electricity},#{maxStrength},#{deviceType})
+        </foreach>
+    </insert>
+</mapper>
