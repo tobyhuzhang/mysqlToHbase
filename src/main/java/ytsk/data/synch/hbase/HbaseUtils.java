@@ -7,6 +7,7 @@ import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.*;
+import org.apache.hadoop.hbase.io.compress.Compression;
 import org.apache.hadoop.hbase.util.Bytes;
 import ytsk.data.synch.annotation.Family;
 
@@ -72,6 +73,7 @@ public class HbaseUtils {
     public void putData(String tableName, HbaseSerialization serialization) throws IOException {
         Table table = connection.getTable(TableName.valueOf(tableName));
         Put put = serialization.serializing();
+        put.setWriteToWAL(false);
         //插入数据
         table.put(put);
         table.close();
@@ -123,6 +125,7 @@ public class HbaseUtils {
             put.add(serialization.serializing());
         }
         //插入数据
+        table.setWriteBufferSize(6 * 1024 * 1024);
         table.put(put);
         table.close();
     }
@@ -163,7 +166,6 @@ public class HbaseUtils {
     public <T extends HbaseSerialization> List<T> scanData(Scan scan, Class<T> clazz) throws Exception {
         return scanData(getTableName(clazz), scan, clazz);
     }
-
     /**
      *  获取数据
      * @throws Exception
@@ -221,11 +223,9 @@ public class HbaseUtils {
      * @throws Exception
      */
     private <T extends HbaseSerialization> void createTable(Class<T> clazz, HBaseAdmin hBaseAdmin) throws IOException {
-
         // 创建表描述类
         TableName tableName = TableName.valueOf(getTableName(clazz)); // 表名称
         HTableDescriptor desc = new HTableDescriptor(tableName);
-
         // 创建列族的描述类
         List<String> families = getFamilies(clazz);
         if(families.size() == 0){
@@ -233,6 +233,8 @@ public class HbaseUtils {
         }
         for(String fam : families){
             HColumnDescriptor family = new HColumnDescriptor(fam); // 列族
+            //Compression压缩
+            family.setCompactionCompressionType(Compression.Algorithm.SNAPPY);
             // 将列族添加到表中
             desc.addFamily(family);
         }
@@ -319,6 +321,29 @@ public class HbaseUtils {
         scan.setFilter(filterList1);
 
         Table table = connection.getTable(TableName.valueOf(tableName));
+        ResultScanner scanner = table.getScanner(scan);
+
+        List<T> list = new ArrayList<T>();
+        for (Result result : scanner) {
+            T modle = clazz.newInstance();
+            modle.deserializing(result);
+            list.add(modle);
+        }
+        table.close();
+        return list;
+    }
+
+    public <T extends HbaseSerialization> List<T> scanDataByBatch(Scan scan,Class<T> clazz, int limit,int offset) throws Exception {
+        List<Filter> filters = new ArrayList<Filter>();
+
+        Filter filterEndTime = new SingleColumnValueFilter(Bytes.toBytes("option"), Bytes.toBytes("id"), CompareFilter.CompareOp.LESS,Bytes.toBytes(limit+offset));
+        filters.add(filterEndTime);
+        Filter filterFromTime = new SingleColumnValueFilter(Bytes.toBytes("option"), Bytes.toBytes("id"), CompareFilter.CompareOp.GREATER,Bytes.toBytes(offset));
+        filters.add(filterFromTime);
+        FilterList filterList1 = new FilterList(filters);
+        scan.setFilter(filterList1);
+        TableName tableName = TableName.valueOf(getTableName(clazz)); // 表名称
+        Table table = connection.getTable(tableName);
         ResultScanner scanner = table.getScanner(scan);
 
         List<T> list = new ArrayList<T>();

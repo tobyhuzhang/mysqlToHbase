@@ -45,18 +45,6 @@ public class SqlDataService {
     }
 
 
-    /**
-     * 分批加载综合数据信息
-     *
-     * @return
-     */
-    public List<TspCompleteCondition> batchLoadCompleteCondition(Map<String, Object> params) {
-        SqlSession sqlSession = sqlSessionFactory.openSession();
-        List<TspCompleteCondition> list = sqlSession.selectList("ytsk.data.synch.mapper.TspCompleteConditionMapper.selectThousand", params);
-        sqlSession.close();
-        return list;
-    }
-
 
     /**
      * 根据id查找信息
@@ -84,12 +72,10 @@ public class SqlDataService {
         return values;
     }
 
-    public void putCompleteCondition(List<TspCompleteCondition> list) {
+    public <T> void insertByBatch(Class<T> clazz,List<T> list) {
+        String clazzName = clazz.getSimpleName();
         SqlSession sqlSession = sqlSessionFactory.openSession();
-        sqlSession.insert("ytsk.data.synch.mapper.TspCompleteConditionMapper.insertByBatch", list);
-        /*for (Employee e:list){
-            sqlSession.insert("ytsk.data.synch.mapper.EmployeeMapper.insert",e);
-        }*/
+        sqlSession.insert("ytsk.data.synch.mapper."+clazzName+"Mapper.insertByBatch", list);
         sqlSession.commit();
         sqlSession.close();
     }
