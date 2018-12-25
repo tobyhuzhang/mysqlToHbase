@@ -11,7 +11,6 @@ import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.util.Bytes;
 import ytsk.data.synch.hbase.HbaseSerialization;
 import ytsk.data.synch.hbase.HbaseUtils;
-import ytsk.data.synch.model.Employee;
 import ytsk.data.synch.model.TspCompleteCondition;
 import ytsk.data.synch.model.TspVehicleCondition;
 import ytsk.data.synch.service.SqlDataService;
@@ -39,7 +38,7 @@ public class OnlineSynch {
                 new InetSocketAddress("192.168.11.239", 11111), "example", "", "");
 
         connector.connect();
-//        connector.subscribe(".*\\..*");
+        //匹配tspdata数据库前缀ims_t开头的那些表
         connector.subscribe("tspdata\\.ims_t.*");
         connector.rollback();
 
@@ -81,7 +80,7 @@ public class OnlineSynch {
             }
 
             RowChange rowChange = null;
-            int count=0;
+            int count = 0;
             try {
                 rowChange = RowChange.parseFrom(entry.getStoreValue());
             } catch (Exception e) {
@@ -203,9 +202,7 @@ public class OnlineSynch {
 
         Class clazz = null;
         //根据不同表做处理
-        if (tableName.equals("hr_employee")) {
-            clazz = Employee.class;
-        } else if (tableName.equals("tspCompleteCondition")) {
+        if (tableName.equals("tspCompleteCondition")) {
             clazz = TspCompleteCondition.class;
         }
 

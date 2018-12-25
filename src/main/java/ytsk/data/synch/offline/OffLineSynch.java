@@ -102,7 +102,7 @@ public class OffLineSynch {
         try {
             Date fromTime = DateUtils.parse("2018-12-19 16:34:30");
             Date endTime = new Date();
-            List<TspCompleteCondition> list = hbaseUtils.scanDataByTime("tspVehicleCondition", TspCompleteCondition.class, "LEFYECG28JHN55053", fromTime, endTime);
+            List<TspCompleteCondition> list = hbaseUtils.scanDataByTime("tspCompleteCondition", TspCompleteCondition.class, "LEFYECG28JHN55053", fromTime, endTime);
             if (list != null && list.size() > 0) {
                 System.out.println("总条数：" + list.size());
 //                for(TspCompleteCondition tcc:list) {

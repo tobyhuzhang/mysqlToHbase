@@ -11,7 +11,7 @@
             <!-- 数据库连接池，由mybatis -->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://192.168.11.40:3306/tspdata?useSSL=false&amp;characterEncoding=utf-8"/>
+                <property name="url" value="jdbc:mysql://192.168.11.234:3306/tspdata?useSSL=false&amp;characterEncoding=utf-8"/>
                 <property name="username" value="canal"/>
                 <property name="password" value="canal"/>
             </dataSource>

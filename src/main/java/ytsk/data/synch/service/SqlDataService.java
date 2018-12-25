@@ -4,7 +4,6 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import ytsk.data.synch.model.TspCompleteCondition;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +44,6 @@ public class SqlDataService {
     }
 
 
-
     /**
      * 根据id查找信息
      *
@@ -64,7 +62,7 @@ public class SqlDataService {
      *
      * @return
      */
-    public <T> List<T> loadAll(Class<T> clazz,Map<String, Object> params) {
+    public <T> List<T> loadAll(Class<T> clazz, Map<String, Object> params) {
         String clazzName = clazz.getSimpleName();
         SqlSession sqlSession = sqlSessionFactory.openSession();
         List<T> values = sqlSession.selectList("ytsk.data.synch.mapper." + clazzName + "Mapper.selectThousand", params);
@@ -72,10 +70,10 @@ public class SqlDataService {
         return values;
     }
 
-    public <T> void insertByBatch(Class<T> clazz,List<T> list) {
+    public <T> void insertByBatch(Class<T> clazz, List<T> list) {
         String clazzName = clazz.getSimpleName();
         SqlSession sqlSession = sqlSessionFactory.openSession();
-        sqlSession.insert("ytsk.data.synch.mapper."+clazzName+"Mapper.insertByBatch", list);
+        sqlSession.insert("ytsk.data.synch.mapper." + clazzName + "Mapper.insertByBatch", list);
         sqlSession.commit();
         sqlSession.close();
     }

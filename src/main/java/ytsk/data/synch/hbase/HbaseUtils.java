@@ -36,6 +36,7 @@ public class HbaseUtils {
 
     /**
      * 获取连接
+     *
      * @return
      * @throws IOException
      */
@@ -45,6 +46,7 @@ public class HbaseUtils {
 
     /**
      * 创建新连接
+     *
      * @return
      * @throws IOException
      */
@@ -55,7 +57,7 @@ public class HbaseUtils {
     /**
      * 关闭连接
      */
-    public void close(){
+    public void close() {
         try {
             connection.close();
         } catch (IOException e) {
@@ -66,7 +68,8 @@ public class HbaseUtils {
 
     /**
      * 添加数据
-     * @param tableName 表名
+     *
+     * @param tableName     表名
      * @param serialization
      * @throws IOException
      */
@@ -81,6 +84,7 @@ public class HbaseUtils {
 
     /**
      * 添加数据
+     *
      * @param serialization
      * @throws IOException
      */
@@ -90,6 +94,7 @@ public class HbaseUtils {
 
     /**
      * 获取表名
+     *
      * @param serialization
      * @throws IOException
      */
@@ -99,29 +104,31 @@ public class HbaseUtils {
 
     /**
      * 获取表名
+     *
      * @param clazz
      * @throws IOException
      */
     public <T extends HbaseSerialization> String getTableName(Class<T> clazz) throws IOException {
         ytsk.data.synch.annotation.Table table = clazz.getAnnotation(ytsk.data.synch.annotation.Table.class);
-        if (table != null){
+        if (table != null) {
             return table.value();
-        }else {
+        } else {
             String className = clazz.getSimpleName();
-            return className.substring(0,1).toLowerCase() + className.substring(1);
+            return className.substring(0, 1).toLowerCase() + className.substring(1);
         }
     }
 
     /**
      * 添加数据
-     * @param tableName 表名
+     *
+     * @param tableName      表名
      * @param serializations
      * @throws IOException
      */
     public void putData(String tableName, List<? extends HbaseSerialization> serializations) throws IOException {
         Table table = connection.getTable(TableName.valueOf(tableName));
         List<Put> put = new ArrayList<Put>();
-        for (HbaseSerialization serialization:serializations){
+        for (HbaseSerialization serialization : serializations) {
             put.add(serialization.serializing());
         }
         //插入数据
@@ -132,17 +139,19 @@ public class HbaseUtils {
 
     /**
      * 添加数据
+     *
      * @param serializations
      * @throws IOException
      */
     public void putData(List<? extends HbaseSerialization> serializations) throws IOException {
-        if (serializations != null && serializations.size() >0){
-            putData(getTableName(serializations.get(0)),serializations);
+        if (serializations != null && serializations.size() > 0) {
+            putData(getTableName(serializations.get(0)), serializations);
         }
     }
 
     /**
-     *  获取数据
+     * 获取数据
+     *
      * @throws Exception
      */
     public <T extends HbaseSerialization> List<T> scanData(String tableName, Scan scan, Class<T> clazz) throws Exception {
@@ -151,38 +160,42 @@ public class HbaseUtils {
 
         List<T> list = new ArrayList<T>();
         for (Result result : scanner) {
-            T modle = clazz.newInstance();
-            modle.deserializing(result);
-            list.add(modle);
+            T model = clazz.newInstance();
+            model.deserializing(result);
+            list.add(model);
         }
         table.close();
         return list;
     }
 
     /**
-     *  获取数据
+     * 获取数据
+     *
      * @throws Exception
      */
     public <T extends HbaseSerialization> List<T> scanData(Scan scan, Class<T> clazz) throws Exception {
         return scanData(getTableName(clazz), scan, clazz);
     }
+
     /**
-     *  获取数据
+     * 获取数据
+     *
      * @throws Exception
      */
     public <T extends HbaseSerialization> T getData(String tableName, Get get, Class<T> clazz) throws Exception {
         Table table = connection.getTable(TableName.valueOf(tableName));
         Result result = table.get(get);
 
-        T modle = clazz.newInstance();
-        modle.deserializing(result);
+        T model = clazz.newInstance();
+        model.deserializing(result);
 
         table.close();
-        return modle;
+        return model;
     }
 
     /**
-     *  获取数据
+     * 获取数据
+     *
      * @throws Exception
      */
     public <T extends HbaseSerialization> T getData(Get get, Class<T> clazz) throws Exception {
@@ -228,10 +241,10 @@ public class HbaseUtils {
         HTableDescriptor desc = new HTableDescriptor(tableName);
         // 创建列族的描述类
         List<String> families = getFamilies(clazz);
-        if(families.size() == 0){
+        if (families.size() == 0) {
             throw new RuntimeException("Can't  found family");
         }
-        for(String fam : families){
+        for (String fam : families) {
             HColumnDescriptor family = new HColumnDescriptor(fam); // 列族
             //Compression压缩
             family.setCompactionCompressionType(Compression.Algorithm.SNAPPY);
@@ -245,26 +258,27 @@ public class HbaseUtils {
 
     /**
      * 获取所有列簇
+     *
      * @param clazz
      * @param <T>
      * @return
      */
-    public <T extends HbaseSerialization> List<String> getFamilies(Class<T> clazz){
+    public <T extends HbaseSerialization> List<String> getFamilies(Class<T> clazz) {
         List<String> families = new ArrayList();
 
         //获取默认列簇
         Family family = clazz.getAnnotation(Family.class);
-        if(family != null){
+        if (family != null) {
             families.add(family.value());
         }
 
         //得到类中的所有属性集合
         Field[] fields = clazz.getDeclaredFields();
         //遍历属性
-        for (Field field:fields) {
+        for (Field field : fields) {
             Family fam = field.getAnnotation(Family.class);
-            if(fam != null){
-                if(!families.contains(fam.value())){
+            if (fam != null) {
+                if (!families.contains(fam.value())) {
                     families.add(fam.value());
                 }
             }
@@ -275,6 +289,7 @@ public class HbaseUtils {
 
     /**
      * 检查表是否存在
+     *
      * @param tableName
      * @return
      */
@@ -287,6 +302,7 @@ public class HbaseUtils {
 
     /**
      * 检查表是否存在
+     *
      * @return
      */
     public <T extends HbaseSerialization> boolean tableExists(Class<T> clazz) throws IOException {
@@ -299,10 +315,10 @@ public class HbaseUtils {
     public <T extends HbaseSerialization> void checkAndCreateTable(Class<T> clazz) throws IOException {
         HBaseAdmin hbaseAdmin = new HBaseAdmin(config);
         boolean exist = hbaseAdmin.tableExists(getTableName(clazz));
-       if (!exist){
-           createTable(clazz, hbaseAdmin);
-           hbaseAdmin.close();
-       }
+        if (!exist) {
+            createTable(clazz, hbaseAdmin);
+            hbaseAdmin.close();
+        }
     }
 
     public <T extends HbaseSerialization> List<T> scanDataByTime(String tableName, Class<T> clazz, String vin, Date fromTime, Date endTime) throws Exception {
@@ -311,9 +327,9 @@ public class HbaseUtils {
         Filter pf = new PrefixFilter(Bytes.toBytes(vin)); // OK  筛选匹配行键的前缀成功的行
         filters.add(pf);
 
-        Filter filterEndTime = new SingleColumnValueFilter(Bytes.toBytes("option"), Bytes.toBytes("acquisitionTime"), CompareFilter.CompareOp.LESS,Bytes.toBytes(endTime.getTime()));
+        Filter filterEndTime = new SingleColumnValueFilter(Bytes.toBytes("option"), Bytes.toBytes("acquisitionTime"), CompareFilter.CompareOp.LESS, Bytes.toBytes(endTime.getTime()));
         filters.add(filterEndTime);
-        Filter filterFromTime = new SingleColumnValueFilter(Bytes.toBytes("option"), Bytes.toBytes("acquisitionTime"), CompareFilter.CompareOp.GREATER,Bytes.toBytes(fromTime.getTime()));
+        Filter filterFromTime = new SingleColumnValueFilter(Bytes.toBytes("option"), Bytes.toBytes("acquisitionTime"), CompareFilter.CompareOp.GREATER, Bytes.toBytes(fromTime.getTime()));
         filters.add(filterFromTime);
         FilterList filterList1 = new FilterList(filters);
 
@@ -325,32 +341,31 @@ public class HbaseUtils {
 
         List<T> list = new ArrayList<T>();
         for (Result result : scanner) {
-            T modle = clazz.newInstance();
-            modle.deserializing(result);
-            list.add(modle);
+            T model = clazz.newInstance();
+            model.deserializing(result);
+            list.add(model);
         }
         table.close();
         return list;
     }
 
-    public <T extends HbaseSerialization> List<T> scanDataByBatch(Scan scan,Class<T> clazz, int limit,int offset) throws Exception {
+    public <T extends HbaseSerialization> List<T> scanDataByBatch(Scan scan, Class<T> clazz, int limit, int offset) throws Exception {
         List<Filter> filters = new ArrayList<Filter>();
 
-        Filter filterEndTime = new SingleColumnValueFilter(Bytes.toBytes("option"), Bytes.toBytes("id"), CompareFilter.CompareOp.LESS,Bytes.toBytes(limit+offset));
+        Filter filterEndTime = new SingleColumnValueFilter(Bytes.toBytes("option"), Bytes.toBytes("id"), CompareFilter.CompareOp.LESS, Bytes.toBytes(limit + offset));
         filters.add(filterEndTime);
-        Filter filterFromTime = new SingleColumnValueFilter(Bytes.toBytes("option"), Bytes.toBytes("id"), CompareFilter.CompareOp.GREATER,Bytes.toBytes(offset));
+        Filter filterFromTime = new SingleColumnValueFilter(Bytes.toBytes("option"), Bytes.toBytes("id"), CompareFilter.CompareOp.GREATER, Bytes.toBytes(offset));
         filters.add(filterFromTime);
         FilterList filterList1 = new FilterList(filters);
         scan.setFilter(filterList1);
         TableName tableName = TableName.valueOf(getTableName(clazz)); // 表名称
         Table table = connection.getTable(tableName);
         ResultScanner scanner = table.getScanner(scan);
-
         List<T> list = new ArrayList<T>();
         for (Result result : scanner) {
-            T modle = clazz.newInstance();
-            modle.deserializing(result);
-            list.add(modle);
+            T model = clazz.newInstance();
+            model.deserializing(result);
+            list.add(model);
         }
         table.close();
         return list;
