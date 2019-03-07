@@ -35,7 +35,7 @@ public class OnlineSynch {
     public void synchToHbase() {
         // 创建链接
         CanalConnector connector = CanalConnectors.newSingleConnector(
-                new InetSocketAddress("192.168.11.239", 11111), "example", "", "");
+                new InetSocketAddress("192.168.11.234", 11111), "example", "", "");
 
         connector.connect();
         //匹配grg_hr数据库前缀ims_t开头的那些表

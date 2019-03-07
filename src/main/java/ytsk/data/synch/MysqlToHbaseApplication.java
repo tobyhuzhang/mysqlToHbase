@@ -17,8 +17,8 @@ public class MysqlToHbaseApplication {
 
         //实时数据同步
 
-//       OnlineSynch onlineSynch = new OnlineSynch();
-//        onlineSynch.synchToHbase();
+       OnlineSynch onlineSynch = new OnlineSynch();
+        onlineSynch.synchToHbase();
     }
 
 }
