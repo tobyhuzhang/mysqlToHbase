@@ -1,7 +1,6 @@
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\model\TspCompleteCondition.java
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\model\TspAoyiCondition.java
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\annotation\Column.java
-E:\mysqlToHbase\src\main\java\ytsk\data\synch\model\EducationExperience.java
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\offline\OffLineSynch.java
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\online\OnlineSynch.java
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\model\TspVehicleCondition.java
@@ -14,8 +13,9 @@ E:\mysqlToHbase\src\main\java\ytsk\data\synch\service\SqlDataService.java
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\hbase\HbaseSerializationReflect.java
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\hbase\DateUtils.java
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\annotation\Table.java
+E:\mysqlToHbase\src\main\java\ytsk\data\synch\mapper\TspVehicleEventMapper.java
+E:\mysqlToHbase\src\main\java\ytsk\data\synch\mapper\TemperatureRecordMapper.java
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\annotation\Clipping.java
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\hbase\HbaseUtils.java
-E:\mysqlToHbase\src\main\java\ytsk\data\synch\model\Employee.java
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\model\TspVehicleEvent.java
 E:\mysqlToHbase\src\main\java\ytsk\data\synch\MysqlToHbaseApplication.java

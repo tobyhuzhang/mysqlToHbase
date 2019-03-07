@@ -38,8 +38,8 @@ public class OnlineSynch {
                 new InetSocketAddress("192.168.11.239", 11111), "example", "", "");
 
         connector.connect();
-        //匹配tspdata数据库前缀ims_t开头的那些表
-        connector.subscribe("tspdata\\.ims_t.*");
+        //匹配grg_hr数据库前缀ims_t开头的那些表
+        connector.subscribe("grg_hr\\.ims_t.*");
         connector.rollback();
 
         while (true) {

@@ -24,7 +24,7 @@ public class OffLineSynch {
     private static SqlDataService sqlDataService = new SqlDataService("SqlMapConfig.xml");
     private static HbaseUtils hbaseUtils = new HbaseUtils();
     private static int offset = 0;//开始位置，从0行开始查询
-    private static int limit = 100000;//偏移量
+    private static int limit = 1;//偏移量
 
     /**
      * 从关系型数据库同步数据到hbase
@@ -43,25 +43,25 @@ public class OffLineSynch {
                 long startTime = System.currentTimeMillis();
                 params.put("offset", offset);
                 params.put("limit", limit);
-                //tccList= sqlDataService.loadAll(TspCompleteCondition.class, params);
+                tccList= sqlDataService.loadAll(TspCompleteCondition.class, params);
 //                tvcList = sqlDataService.loadAll(TspVehicleCondition.class, params);
-                trList = sqlDataService.loadAll(TemperatureRecord.class, params);
-                tveList = sqlDataService.loadAll(TspVehicleEvent.class, params);
+//                trList = sqlDataService.loadAll(TemperatureRecord.class, params);
+//                tveList = sqlDataService.loadAll(TspVehicleEvent.class, params);
 
-//                hbaseUtils.checkAndCreateTable(TspCompleteCondition.class);
+                hbaseUtils.checkAndCreateTable(TspCompleteCondition.class);
 //                hbaseUtils.checkAndCreateTable(TspVehicleCondition.class);
-                hbaseUtils.checkAndCreateTable(TemperatureRecord.class);
-                hbaseUtils.checkAndCreateTable(TspVehicleEvent.class);
+//                hbaseUtils.checkAndCreateTable(TemperatureRecord.class);
+//                hbaseUtils.checkAndCreateTable(TspVehicleEvent.class);
 
-//                hbaseUtils.putData(tccList);
+                hbaseUtils.putData(tccList);
 //                hbaseUtils.putData(tvcList);
-                hbaseUtils.putData(trList);
-                hbaseUtils.putData(tveList);
+//                hbaseUtils.putData(trList);
+//                hbaseUtils.putData(tveList);
 //                Scan scan = new Scan();
                 offset += limit;
                 long endTime = System.currentTimeMillis();
                 LOG.info("每100000条导入时间：" + (endTime - startTime) / 1000 + "s");
-            } while (trList.size() > 0 || tveList.size() > 0);
+            } while (tccList.size() > 0);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

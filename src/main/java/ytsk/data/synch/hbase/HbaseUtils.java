@@ -247,7 +247,7 @@ public class HbaseUtils {
         for (String fam : families) {
             HColumnDescriptor family = new HColumnDescriptor(fam); // 列族
             //Compression压缩
-            family.setCompactionCompressionType(Compression.Algorithm.SNAPPY);
+            //family.setCompactionCompressionType(Compression.Algorithm.SNAPPY);
             // 将列族添加到表中
             desc.addFamily(family);
         }

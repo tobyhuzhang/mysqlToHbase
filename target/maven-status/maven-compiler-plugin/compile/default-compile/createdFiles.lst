@@ -1,8 +1,6 @@
 ytsk\data\synch\hbase\HbaseSerializationReflect.class
 ytsk\data\synch\mapper\TspVehicleConditionMapper.class
 ytsk\data\synch\model\TspVehicleCondition.class
-ytsk\data\synch\model\EducationExperience.class
-ytsk\data\synch\model\Employee.class
 ytsk\data\synch\model\TspCompleteCondition.class
 ytsk\data\synch\MysqlToHbaseApplication.class
 ytsk\data\synch\hbase\DateUtils.class
@@ -10,7 +8,9 @@ ytsk\data\synch\annotation\Family.class
 ytsk\data\synch\annotation\Column.class
 ytsk\data\synch\model\TspVehicleEvent.class
 ytsk\data\synch\offline\OffLineSynch.class
+ytsk\data\synch\mapper\TspVehicleEventMapper.class
 ytsk\data\synch\hbase\HbaseUtils.class
+ytsk\data\synch\mapper\TemperatureRecordMapper.class
 ytsk\data\synch\hbase\HbaseSerialization.class
 ytsk\data\synch\model\TemperatureRecord.class
 ytsk\data\synch\online\OnlineSynch.class

@@ -21,7 +21,7 @@ public class SimpleCanalClient {
                 new InetSocketAddress("192.168.11.239", 11111), "example", "", "");
 
         connector.connect();
-        connector.subscribe("tspdata\\ims_tsp_completecondition");
+        connector.subscribe("grg_hr\\ims_tsp_completecondition");
         connector.rollback();
 
         while (true) {
